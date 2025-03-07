@@ -34,13 +34,13 @@ const userSchema = new Schema(
             type: String,
             enum: Object.values(UserType), // Restrict userType to the values of UserType
             required: true, // Optional: make it required if necessary
-            default: Status.INACTIVE
+            default: Status.VIEWER
         },
-        status:{
+        status: {
             type: String,
-            enum: Object.values(UserType), // Restrict userType to the values of UserType
+            enum: Object.values(Status), // Restrict userType to the values of UserType
             required: true, // Optional: make it required if necessary
-            default: UserType.VIEWER
+            default: Status.INACTIVE
         },
         bookings: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Booking' }], //bookings by a viewer
         cinemas: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Cinema' }], //cinema by owner
@@ -48,4 +48,4 @@ const userSchema = new Schema(
     { timestamps: true }
 )
 
-export const userModel = model('User', userShema)
+export const userModel = model('User', userSchema)

@@ -15,8 +15,7 @@ export const userCreate = Joi.object(
 
 export const userUpdate = Joi.object(
     {
-        first_name: Joi.string().min(3),
-        last_name: Joi.string().min(3),
+        address: Joi.string(),
         password: Joi.string().pattern(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[*.,()@/])[a-zA-Z0-9*.,()@/]{8,}$'))
     }
 ).min(1)
