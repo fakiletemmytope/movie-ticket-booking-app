@@ -7,21 +7,26 @@
 
 import mongoose from "mongoose";
 
-const {model, Schema} = mongoose
+const { model, Schema } = mongoose
 
 const PaymentStatus = {
     CANCELLED: 'cancelled',
-    PENDING: 'pending', 
+    PENDING: 'pending',
     FAILED: 'failed',
-    SUCCESS: 'success' 
+    SUCCESS: 'success'
 }
 
-const bookingSchema = new Schema (
+const bookingSchema = new Schema(
     {
-        user_id:{},
-        showtime_id:{},  
-        seat_booked:{},
-        amount:{},
-        payment_status:{}
+        user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+        showtime_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Showtime' },
+        seat_booked: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Seat' }],
+        amount: { type: Number, required: true },
+        payment_status: {
+            type: String,
+            enum: Object.values(PaymentStatus),
+            required: true,
+            default: Status.PENDING
+        }
     }
 )

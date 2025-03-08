@@ -13,13 +13,14 @@ export const ScreenType = {
 
 const screenSchema = new Schema(
     {
-        cinema_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Cinema' },
+        cinema: { type: mongoose.Schema.Types.ObjectId, ref: 'Cinema' },
         capacity: { type: Number },
         screenType: {
             type: String,
             enum: Object.values(ScreenType),
             required: true,
-        }
+        },
+        seats: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Seat' }]
     }
 )
 
