@@ -1,6 +1,7 @@
 import { db_close, db_connect } from "../database/db.js"
 import { moviesRouter } from "../routes/movies.js"
 import { movieModel } from "../schema/movie.js"
+import { upload_image } from "../utils/upload.js"
 
 const getMovie = async (req, res) => {
     const id = req.params.id
@@ -169,6 +170,39 @@ const deleteMovie = async (req, res) => {
 }
 
 
+//adjust this
+export const upload_image = async (req, res) => {
+
+    try {
+        await db_connect()
+        const movie = await movieModel.findById(req.params.id)
+        if (movie) {
+            if (req.decode.userType === "admin" || req.decode.userType === "owner") {
+                const image = req.file
+                const base64Image = image.buffer.toString('base64');
+                const imageDataURI = `data:${image.mimetype};base64,${base64Image}`;
+                const result = await upload_image(imageDataURI);
+                const imageURL = result.secure_url
+                const update_image_url = await movieModel.findByIdAndUpdate(
+                    req.params.lesson_id, { imageURL: imageURL },
+                    { new: true }
+                )
+                res.json({ update_image_url });
+            }
+            else {
+                res.status(403).send("Unauthorised user")
+            }
+
+        }
+        else {
+            res.status(403).send('Lesson not found');
+        }
+    } catch (error) {
+        res.status(500).send('Upload failed', error.message);
+    }
+}
+
+
 export {
     getMovie,
     getMovies,
@@ -176,5 +210,6 @@ export {
     updateMovie,
     deleteMovie,
     rateMovie,
-    reviewMovie
+    reviewMovie,
+    upload_image
 }
