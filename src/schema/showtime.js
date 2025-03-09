@@ -12,11 +12,12 @@ const { Schema, model } = mongoose
 
 const showtimeSchema = new Schema (
     {
-        movie_id:{},
-        cinema_id:{},
+        movie_id:{ type: mongoose.Schema.Types.ObjectId, ref: 'Movie' },
+        cinema_id:{ type: mongoose.Schema.Types.ObjectId, ref: 'Cinema' },
         dateTime: {},
-        screen_id: {}
-    }
+        screen_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Screen' }
+    },
+    {timestamps:true}
 )
 
 export const showtimeModel = model('Showtime', showtimeSchema)
@@ -28,4 +29,4 @@ export const showtimeModel = model('Showtime', showtimeSchema)
 // Showtime - Booking: A Showtime can have many Bookings (1:M).
 // Booking - Seat: A booking has many seats. (1:M)
 // Booking - Payment: A Booking has one Payment (1:1).
-// Cinema - Seat: A Cinema has many Seats (1:M).
+// Cinema - Seat: A Cinema has many Seats (1:M)

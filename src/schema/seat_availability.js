@@ -4,9 +4,9 @@ const {Schema, model} = mongoose
 
 const seatAvailabiltySchema = new Schema(
     {
-        showtime_id:{},
-        // screen_id: {},
-        booked_seat: [{}]
+        showtime_id:{ type: mongoose.Schema.Types.ObjectId, ref: 'Showtime' },
+        screen_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Screen' },
+        booked_seat: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Seat'}]
     }
 )
 

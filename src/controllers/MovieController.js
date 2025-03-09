@@ -1,4 +1,5 @@
 import { db_close, db_connect } from "../database/db.js"
+import { moviesRouter } from "../routes/movies.js"
 import { movieModel } from "../schema/movie.js"
 import { upload_image } from "../utils/upload.js"
 
@@ -77,14 +78,85 @@ const updateMovie = async (req, res) => {
 const rateMovie = async (req, res) => {
     const id = req.params.id
     const { _id } = req.decode
+    const { rate } = req.body
+    try {
+        await db_connect()
+        const movie = await movieModel.findById(id)
+        if (movie) {
+            const { rating = [] } = movie
+            if (rating) {
+                const exists = rating.find(({ user }) => user == _id)
+                if (exists) {
+                    exists.rate = rate
+                }
+                else {
+                    const new_rate = {
+                        user: _id,
+                        rate: rate
+                    }
+                    rating.push(new_rate)
+                }
+            }
+            else {
+                rating = [{ user: _id, rate: rate }]
+            }
+            const totalRate = rating.map(r => r.rate).reduce((acc, val) => acc + val, 0)
+
+            const avg = totalRate / rating.length;
+            const update = { rating: rating, average_rating: avg }
+            const updated = await movieModel.findByIdAndUpdate(id, update, { new: true })
+            updated ? res.status(200).json(updated) : res.status(404).send("Rate not updated")
+        }
+        else {
+            res.status(404).send("Movie not found")
+        }
+    } catch (error) {
+        res.status(500).send(error.message)
+    } finally {
+        db_close()
+    }
 }
 
 const reviewMovie = async (req, res) => {
     const id = req.params.id
     const { _id } = req.decode
+    const { review } = req.body
+    try {
+        await db_connect()
+        const movie = await movieModel.findById(id)
+        if (movie) {
+            const { reviews = [] } = movie
+            if (review) {
+                const exists = reviews.find(({ user }) => user == _id)
+                if (exists) {
+                    exists.review = review
+                }
+                else {
+                    const new_review = {
+                        user: _id,
+                        review: review
+                    }
+                    reviews.push(new_review)
+                }
+            }
+            else {
+                reviews = [{ user: _id, review: review }]
+            }
+            const update = { reviews: reviews }
+            const updated = await movieModel.findByIdAndUpdate(id, update, { new: true })
+            updated ? res.status(200).json(updated) : res.status(404).send("Review not updated")
+        }
+        else {
+            res.status(404).send("Movie not found")
+        }
+    } catch (error) {
+        res.status(500).send(error.message)
+    } finally {
+        db_close()
+    }
 }
 
-const deleteMovie = async () => {
+const deleteMovie = async (req, res) => {
     const id = req.params.id
     try {
         await db_connect()

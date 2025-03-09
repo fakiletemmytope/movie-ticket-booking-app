@@ -1,20 +1,12 @@
-// Seat:
-// SeatID (PK)
-// CinemaID (FK)
-// ScreenNumber
-// RowNumber
-// SeatNumber
-
 import mongoose from "mongoose";
 
 const { Schema, model } = mongoose
 
 const seatSchema = new Schema (
     {
-        cinema_id: {},
-        screen_id: {},
-        row_number: {},
-        seat_number: {},
+        screen: {type: mongoose.Schema.Types.ObjectId, ref: 'Screen', required: true},
+        row: {type: Number, required: true},
+        seat_number: {type: Number, required: true},
     }
 )
 

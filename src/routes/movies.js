@@ -3,10 +3,10 @@ import { createMovie, deleteMovie, getMovie, getMovies, rateMovie, reviewMovie, 
 import { authenticate, isAdmin, isAdminOrOwner, isViewer } from "../middlewares/authenticate.js";
 import { validate_movieCreate } from "../middlewares/validate.js";
 import multer from "multer"
+import { validate_movieCreate, validate_movieUpdate } from "../middlewares/validate.js";
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
-
 const router = Router()
 
 router.get('/', getMovies)
