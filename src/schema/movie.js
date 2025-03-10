@@ -47,7 +47,8 @@ const movieSchema = new Schema(
         director: { type: String },
         cast: { type: [String] },
         duration: { type: Number },
-        reviews: { type: [reviewSchema] }
+        reviews: { type: [reviewSchema] },
+        user: {type: mongoose.Schema.Types.ObjectId, ref: 'User'}
     },
     { timestamps: true }
 )

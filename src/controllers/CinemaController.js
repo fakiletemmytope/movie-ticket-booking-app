@@ -1,5 +1,5 @@
 import { cinemaModel } from "../schema/cinema.js"
-import { userModel } from "../schema/user.js"
+import { userModel, UserType } from "../schema/user.js"
 import { db_close, db_connect } from "../database/db.js"
 
 const getCinemas = async (req, res) => {
@@ -50,6 +50,7 @@ const createCinema = async (req, res) => {
 const updateCinema = async (req, res) => {
     const { id } = req.params
     const { name, address, city, state } = req.body
+    const role = req.decode.userType
     const update = {}
     if (name)
         update.name = name
@@ -61,8 +62,14 @@ const updateCinema = async (req, res) => {
         update.state = state
     try {
         await db_connect()
-        const updated = await cinemaModel.findByIdAndUpdate(id, update, { new: true })
-        update ? res.status(200).json(updated) : res.status(404).send("Cinema not found or updated")
+        if (role === UserType.ADMIN) {
+            const updated = await cinemaModel.findByIdAndUpdate(id, update, { new: true })
+            update ? res.status(200).json(updated) : res.status(404).send("Cinema not found or updated")
+        }
+        else {
+            const updated = await cinemaModel.findOneAndUpdate({ _id: id, manager: req.decode._id }, update, { new: true })
+            update ? res.status(200).json(updated) : res.status(404).send("Cinema not found or updated")
+        }
     } catch (error) {
         res.status(500).send(error.message)
     }

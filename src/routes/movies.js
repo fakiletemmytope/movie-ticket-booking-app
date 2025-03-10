@@ -1,7 +1,6 @@
 import { Router } from "express";
-import { createMovie, deleteMovie, getMovie, getMovies, rateMovie, reviewMovie, updateMovie, upload_image } from "../controllers/MovieController.js";
+import { createMovie, deleteMovie, getMovie, getMovies, rateMovie, reviewMovie, updateMovie, upload_image_to_cloud } from "../controllers/MovieController.js";
 import { authenticate, isAdmin, isAdminOrOwner, isViewer } from "../middlewares/authenticate.js";
-import { validate_movieCreate } from "../middlewares/validate.js";
 import multer from "multer"
 import { validate_movieCreate, validate_movieUpdate } from "../middlewares/validate.js";
 
@@ -16,7 +15,7 @@ router.put('/:id', authenticate, isAdmin, validate_movieCreate, updateMovie)
 router.put('/:id/rating', authenticate, isViewer, validate_movieCreate, rateMovie)
 router.put('/:id/review', authenticate, isViewer, validate_movieCreate, reviewMovie)
 router.delete('/:id', isAdmin, deleteMovie)
-router.post("/:id/upload", authenticate, isAdminOrOwner, upload.single('image'), upload_image)
+router.post("/:id/upload", authenticate, isAdminOrOwner, upload.single('image'), upload_image_to_cloud)
 
 
 export const moviesRouter = router
