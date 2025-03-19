@@ -1,6 +1,8 @@
 import { cinemaModel } from "../schema/cinema.js"
 import { userModel, UserType } from "../schema/user.js"
 import { db_close, db_connect } from "../database/db.js"
+import { screenModel } from "../schema/screen.js"
+import { seatModel } from "../schema/seat.js"
 
 const getCinemas = async (req, res) => {
     try {
@@ -82,8 +84,17 @@ const deleteCinema = async (req, res) => {
     const { id } = req.params
     try {
         await db_connect()
-        const deleted = await cinemaModel.findByIdAndDelete(id)
-        deleted ? res.status(204) : res.status(404).send("Cinema not found")
+        const cinema = await cinemaModel.findById(id)
+        if (cinema) {
+            const screens = await screenModel.find({ cinema: id })
+            await Promise.all(screens.map(async (screen) => {
+                await seatModel.deleteMany({ screen: screen._id })
+            }));
+            await screenModel.deleteMany({ cinema: id })
+            await cinemaModel.findByIdAndDelete(id)
+            res.status(204).send()
+        }
+        else { res.status(404).send("Cinema not found") }
     } catch (error) {
         res.status(500).send(error.message)
     }

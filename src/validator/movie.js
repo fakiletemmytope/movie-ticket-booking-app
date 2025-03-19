@@ -13,7 +13,9 @@ export const movieCreate = Joi.object(
         description: Joi.string().allow(null),
         imageURL: Joi.string().allow(null),
         director: Joi.string().allow(null),
-        cast: Joi.array().allow(null),
+        cast: Joi.array().items(
+            Joi.string()
+        ).allow(null),
         duration: Joi.number(),
     }
 )

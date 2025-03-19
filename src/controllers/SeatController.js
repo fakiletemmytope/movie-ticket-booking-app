@@ -1,6 +1,7 @@
 import { db_close, db_connect } from "../database/db.js"
 import { seatModel } from "../schema/seat.js"
 import { screenModel } from "../schema/screen.js"
+import { cinemaModel } from "../schema/cinema.js"
 
 const getSeat = async (req, res) => {
     const id = req.params.id
@@ -30,19 +31,25 @@ const getSeats = async (req, res) => {
 
 const createSeat = async (req, res) => {
     const { seats, screen_id } = req.body
+    const user_id = req.decode._id
     try {
         await db_connect()
         const screen = await screenModel.findById(screen_id)
-        if (screen) {
+        if (!screen) {
+            return res.status(404).send("screen not found")
+        }
+        const cinema = await cinemaModel.findOne({ _id: screen.cinema, manager: user_id });
+        if (cinema) {
+            seats.forEach(seat => seat.screen = screen_id);
             const seats_created = await seatModel.insertMany(seats)
             const seatIds = seats_created.map(({ _id }) => _id);
             await screenModel.findByIdAndUpdate(screen_id, {
-                $push: { seats: { $each: seatIds } } // Assuming a 'seats' array exists in ScreenModel
+                $push: { seats: { $each: seatIds } }
             });
             res.status(201).json(seats_created)
         }
         else {
-            res.status(404).send("scress not found")
+            res.status(403).send("Authorised user")
         }
     } catch (error) {
         res.status(500).send(error.message)

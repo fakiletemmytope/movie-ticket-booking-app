@@ -6,6 +6,8 @@ import { moviesRouter } from "./routes/movies.js";
 import { cinema_router } from "./routes/cinema.js";
 import { screen_router } from "./routes/screen.js";
 import { seat_router } from "./routes/seat.js";
+import { showtime_router } from "./routes/showtime.js";
+import { booking_router } from "./routes/booking.js";
 
 const app = express()
 
@@ -20,6 +22,8 @@ app.use('/api/movies', moviesRouter)
 app.use('/api/cinemas', cinema_router)
 app.use('/api/screens', screen_router)
 app.use('/api/seats', seat_router)
+app.use('/api/showtimes', showtime_router)
+app.use('/api/bookings', booking_router)
 app.get('/', () => {
     res.redirect('https://documenter.getpostman.com/view/16249004/2sAYdoFnqm')
 })

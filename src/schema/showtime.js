@@ -1,32 +1,24 @@
-// Showtime:
-// ShowtimeID (PK)
-// MovieID (FK)
-// CinemaID (FK)
-// DateTime
-// ScreenNumber
-
-
 import mongoose from "mongoose";
 
 const { Schema, model } = mongoose
 
-const showtimeSchema = new Schema (
+const showtimeSchema = new Schema(
     {
-        movie_id:{ type: mongoose.Schema.Types.ObjectId, ref: 'Movie' },
-        cinema_id:{ type: mongoose.Schema.Types.ObjectId, ref: 'Cinema' },
-        dateTime: {},
-        screen_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Screen' }
+        movie_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Movie' },
+        dateTime: { type: Date, required: true },
+        screen_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Screen' },
+        available_seats: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Seat', require: true }],
+        booked_seats: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Seat' }],
+        status: {
+            type: String,
+            enum: ['upcoming', 'active', 'completed', 'canceled'],
+            default: 'upcoming'
+        },
+        manager: {type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true}
     },
-    {timestamps:true}
+    { timestamps: true }
 )
 
-export const showtimeModel = model('Showtime', showtimeSchema)
+showtimeSchema.index({ dateTime: 1, screen_id: 1 }, { unique: true })
 
-// User - Booking: A User can make many Bookings (1:M).
-// Movie - Showtime: A Movie can have many Showtimes (1:M).
-// Cinema - Showtime: A Cinema can have many Showtimes (1:M).
-// Showtime - Seat: A showtime has many seats. (1:M)
-// Showtime - Booking: A Showtime can have many Bookings (1:M).
-// Booking - Seat: A booking has many seats. (1:M)
-// Booking - Payment: A Booking has one Payment (1:1).
-// Cinema - Seat: A Cinema has many Seats (1:M)
+export const showtimeModel = model('Showtime', showtimeSchema)
