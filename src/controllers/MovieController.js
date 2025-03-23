@@ -7,7 +7,7 @@ const getMovie = async (req, res) => {
     const id = req.params.id
     try {
         await db_connect()
-        const movie = await movieModel.findById(id)
+        const movie = await movieModel.findById(id, "_id title genre average_rate released_date description director cast duration reviews")
         movie ? res.status(200).json(movie) : res.status(404).send('movie not found')
     } catch (error) {
         res.status(500).send(error.message)
@@ -20,7 +20,7 @@ const getMovie = async (req, res) => {
 const getMovies = async (req, res) => {
     try {
         await db_connect()
-        const movies = await movieModel.find({}).exec()
+        const movies = await movieModel.find({}, "_id title genre released_date description director cast duration reviews").exec()
         res.status(200).json(movies)
     } catch (error) {
         res.status(500).send(error.message)
@@ -103,7 +103,7 @@ const rateMovie = async (req, res) => {
 
             const avg = totalRate / rating.length;
             const update = { rating: rating, average_rating: avg }
-            const updated = await movieModel.findByIdAndUpdate(id, update, { new: true })
+            const updated = await movieModel.findByIdAndUpdate(id, update, { new: true, select: "_id title genre average_rating released_date description director cast duration reviews" })
             updated ? res.status(200).json(updated) : res.status(404).send("Rate not updated")
         }
         else {
@@ -142,7 +142,7 @@ const reviewMovie = async (req, res) => {
                 reviews = [{ user: _id, review: review }]
             }
             const update = { reviews: reviews }
-            const updated = await movieModel.findByIdAndUpdate(id, update, { new: true })
+            const updated = await movieModel.findByIdAndUpdate(id, update, { new: true, select: "_id title genre average_rating released_date description director cast duration reviews" })
             updated ? res.status(200).json(updated) : res.status(404).send("Review not updated")
         }
         else {

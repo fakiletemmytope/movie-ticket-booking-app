@@ -20,6 +20,7 @@ const screenSchema = new Schema(
             enum: Object.values(ScreenType),
             required: true,
         },
+        base_price: {type: Number, required: true},
         seats: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Seat' }],
         showtimes: [{type: mongoose.Schema.Types.ObjectId, ref: 'Showtime'}]
     }

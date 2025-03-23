@@ -7,6 +7,7 @@ const seatSchema = new Schema(
         screen: { type: mongoose.Schema.Types.ObjectId, ref: 'Screen', required: true },
         row: { type: Number, required: true },
         seat_number: { type: Number, required: true },
+        seat_price: { type: Number, required: true, default: 0 }
     }
 )
 

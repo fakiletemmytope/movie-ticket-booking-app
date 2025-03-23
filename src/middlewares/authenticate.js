@@ -85,7 +85,6 @@ export const isViewer = async (req, res, next) => {
 }
 
 
-
 export const isAdminOrOwner = async (req, res, next) => {
     // console.log(req.decode)
     if (req.decode.userType == "owner" || req.decode.userType == "admin") {

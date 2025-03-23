@@ -14,7 +14,7 @@ router.post('/', authenticate, isAdminOrOwner, validate_movieCreate, createMovie
 router.put('/:id', authenticate, isAdmin, validate_movieUpdate, updateMovie)
 router.put('/:id/rating', authenticate, isViewer, validate_movieUpdate, rateMovie)
 router.put('/:id/review', authenticate, isViewer, validate_movieUpdate, reviewMovie)
-router.delete('/:id', isAdmin, deleteMovie)
+router.delete('/:id', authenticate, isAdmin, deleteMovie)
 router.post("/:id/upload", authenticate, isAdminOrOwner, upload.single('image'), upload_image_to_cloud)
 
 

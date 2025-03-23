@@ -35,10 +35,10 @@ const getUser = async (req, res) => {
 }
 
 const createUser = async (req, res) => {
-    const { firstName, lastName, email, password, address, userType, status } = req.body
+    const { firstName, lastName, email, password, address, userType } = req.body
     try {
         await db_connect()
-        const saved_user = await userModel.create({ firstName, lastName, email, password, address, userType, status })
+        const saved_user = await userModel.create({ firstName, lastName, email, password, address, userType })
         const { _id, createdAt, updatedAt } = saved_user;
         const payload = { id: _id, email: email }
         const token = getToken(payload, "20m")
@@ -57,23 +57,22 @@ const createUser = async (req, res) => {
 }
 
 const updateUser = async (req, res) => {
-    const { password, address } = req.body
+    const { address } = req.body
     const id = req.decode._id
     const update = {}
-    if (password)
-        update.password = hash_password(password)
-    if (address)
-        update.address = address
-
+    if (!address)
+        return res.status(400).send("Invalid request")
+    update.address = address
     try {
         await db_connect()
-        const updated_user = await userModel.findByIdAndUpdate(id, update, { new: true }, "_id firstName lastName email userType status createdAt updatedAt")
+        const updated_user = await userModel.findByIdAndUpdate(id, update, { new: true, select: "_id firstName lastName address email userType status createdAt updatedAt" })
         res.status(200).json(updated_user)
     } catch (error) {
         res.status(500).send(error.message)
     } finally {
         await db_close()
     }
+
 }
 
 const deleteUser = async (req, res) => {
@@ -81,7 +80,7 @@ const deleteUser = async (req, res) => {
     try {
         await db_connect()
         const deleted_user = await userModel.findByIdAndDelete(id)
-        deleted_user ? res.status(200).json(updated_user) : res.status(404).send('user not found')
+        deleted_user ? res.status(204).send() : res.status(404).send('user not found')
     } catch (error) {
         res.status(500).send(error.message)
     } finally {

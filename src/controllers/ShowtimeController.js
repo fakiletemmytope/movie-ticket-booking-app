@@ -7,11 +7,11 @@ const getShowtime = async (req, res) => {
     const id = req.params.id
     try {
         await db_connect()
-        const showtime = await showtimeModel.findById(id)
+        const showtime = await showtimeModel.findById(id, "_id movie_id dateTime screen_id available seats booked_seats status")
             .populate('screen_id').populate('movie_id')
             .populate('available_seats')
             .populate('booked_seats')
-        showtime ? res.status(200).json(showtime) : res.status(404).send("Seat not found")
+        showtime ? res.status(200).json(showtime) : res.status(404).send("Showtime not found")
     } catch (error) {
         res.status(500).send(error.message)
     } finally {
@@ -22,7 +22,7 @@ const getShowtime = async (req, res) => {
 const getShowtimes = async (req, res) => {
     try {
         await db_connect()
-        const showtimes = await showtimeModel.find({}).populate('screen_id').exec()
+        const showtimes = await showtimeModel.find({}, "_id movie_id dateTime screen_id available_seats booked_seats status").populate('screen_id').exec()
         res.status(200).json(showtimes)
     } catch (error) {
         res.status(500).send(error.message)
@@ -35,11 +35,11 @@ const createShowtime = async (req, res) => {
     const { movie_id, screen_id, dateTime } = req.body
     try {
         await db_connect()
-        const screen = await screenModel.findOne({_id: screen_id})
+        const screen = await screenModel.findOne({ _id: screen_id })
         const movie = await movieModel.findById(movie_id)
         if (screen && movie) {
             await db_connect()
-            const showtime = await showtimeModel.create({ movie_id, screen_id, dateTime, available_seats: screen.seats, manager: res.decode._id })
+            const showtime = await showtimeModel.create({ movie_id, screen_id, dateTime, available_seats: screen.seats, manager: req.decode._id })
             screen.showtimes.push(showtime._id)
             await screen.save()
             res.status(201).json(showtime)
@@ -79,9 +79,16 @@ const updateShowtime = async (req, res) => {
 const deleteShowtime = async (req, res) => {
     const id = req.params.id
     try {
-        await db_connect()
-        const deleted_show = await showtimeModel.findByIdAndDelete(id)
-        seat ? res.status(200).json(deleted_show) : res.status(404).send("Showtime not found")
+        await db_connect();
+        const show = await showtimeModel.findOneAndDelete({ _id: id, manager: req.decode._id });
+        if (show) {
+            await screenModel.updateOne(
+                { _id: show.screen_id },
+                { $pull: { showtimes: id } }
+            );
+            return res.status(204).send();
+        }
+        res.status(404).send("Showtime not found");
     } catch (error) {
         res.status(500).send(error.message)
     } finally {

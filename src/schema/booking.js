@@ -21,7 +21,8 @@ const bookingSchema = new Schema(
             required: true,
             default: PaymentStatus.PENDING
         }
-    }
+    },
+    { timestamps: true }
 )
 
 export const bookingModel = model('Booking', bookingSchema)

@@ -5,8 +5,8 @@ import { validate_bookingCreate } from "../middlewares/validate.js";
 
 const router = Router()
 
-router.get('/', getBookings)
-router.get('/:id', getBooking)
+router.get('/', authenticate, getBookings)
+router.get('/:id', authenticate, getBooking)
 router.post('/', authenticate, isViewer, validate_bookingCreate, createBooking)
 
 export const booking_router = router

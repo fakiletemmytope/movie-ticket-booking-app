@@ -5,12 +5,12 @@ import {
     getScreens,
     updateScreen
 } from "../controllers/ScreenController.js";
-import {authenticate, isAdminOrOwner, isOwner} from "../middlewares/authenticate.js"
+import { authenticate, isAdminOrOwner, isOwner } from "../middlewares/authenticate.js"
 import { Router } from "express";
 import { validate_screenCreate, validate_screenUpdate } from "../middlewares/validate.js";
 
 const router = Router()
-router.get('/', getScreens)
+router.get('/', authenticate, getScreens)
 router.get('/:id', getScreen)
 router.post('/', authenticate, isOwner, validate_screenCreate, createScreen)
 router.put('/:id', authenticate, isOwner, validate_screenUpdate, updateScreen)

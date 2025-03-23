@@ -21,9 +21,9 @@ export const login = async (req, res) => {
             res.status(404).send(`User is ${user.status} and cannot be logged in. Contact the admin if suspended or request for activation token`)
         }
         else {
-            const { _id, first_name, last_name, email, userType } = user
-            const token = getToken({ first_name, last_name, _id, userType })
-            res.status(200).json({ _id, first_name, last_name, email, token, userType })
+            const { _id, firstName, lastName, email, userType } = user
+            const token = getToken({ firstName, lastName, _id, userType })
+            res.status(200).json({ _id, firstName, lastName, email, token, userType })
         }
 
     } catch (err) {

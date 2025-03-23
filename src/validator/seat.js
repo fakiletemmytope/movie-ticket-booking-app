@@ -8,6 +8,7 @@ export const seatCreate = Joi.object(
                 {
                     row: Joi.number().required(),
                     seat_number: Joi.number().required(),
+                    seat_price: Joi.number().min(0).required()
                 }
             )
         ).required()
@@ -18,6 +19,7 @@ export const seatCreate = Joi.object(
 export const seatUpdate = Joi.object(
     {
         row: Joi.number(),
-        seat_number: Joi.number()
+        seat_number: Joi.number(),
+        seat_price: Joi.number().min(0)
     }
 )

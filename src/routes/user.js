@@ -9,6 +9,6 @@ router.get('/', authenticate, isAdmin, getUsers)
 router.get('/:id', authenticate, getUser)
 router.post('/', validate_userCreate, hashPassword, createUser)
 router.put('/:id', authenticate, validate_userUpdate, updateUser)
-router.delete('/:id', authenticate, deleteUser)
+router.delete('/:id', authenticate, isAdmin, deleteUser)
 
 export const userRouter = router

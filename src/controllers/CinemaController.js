@@ -7,7 +7,7 @@ import { seatModel } from "../schema/seat.js"
 const getCinemas = async (req, res) => {
     try {
         await db_connect()
-        const cinemas = await cinemaModel.find({}).populate("screens")
+        const cinemas = await cinemaModel.find({}, "_id name address city state screens reviews").populate("screens")
         res.status(200).json(cinemas)
     } catch (error) {
         res.status(500).send(error.message)
@@ -20,7 +20,7 @@ const getCinema = async (req, res) => {
     const id = req.params.id
     try {
         await db_connect()
-        const cinema = await cinemaModel.findById(id)
+        const cinema = await cinemaModel.findById(id, "_id name address city state screens reviews").populate('screens')
         cinema ? res.status(200).json(cinema) : res.status(404).send("Cinema not found")
     } catch (error) {
         res.status(500).send(error.message)

@@ -12,6 +12,7 @@ export const isTokenBlacklisted = (token) => {
 };
 
 
+
 export const getToken = (payload, time="60m") => {
     const options = {
         expiresIn: time

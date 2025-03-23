@@ -8,7 +8,7 @@ const router = Router()
 router.get('/', getShowtimes)
 router.get('/:id', getShowtime)
 router.post('/', authenticate, isOwner, validate_showtimeCreate, createShowtime)
-router.put('/', authenticate, isOwner, validate_showtimeUpdate, updateShowtime)
-router.delete('/', authenticate, isAdminOrOwner, deleteShowtime)
+router.put('/:id', authenticate, isOwner, validate_showtimeUpdate, updateShowtime)
+router.delete('/:id', authenticate, isAdminOrOwner, deleteShowtime)
 
 export const showtime_router = router

@@ -62,12 +62,13 @@ const createSeat = async (req, res) => {
 
 const updateSeat = async (req, res) => {
     const id = req.params.id
-    const { row, seat_number } = req.body
+    const { row, seat_number, seat_price } = req.body
+    console.log(seat_price, row, seat_number)
     const update = {}
-    if (row)
-        update.row = row
-    if (seat_number)
-        update.seat_number = seat_number
+    if (row !== undefined) update.row = row
+    if (seat_number !== undefined) update.seat_number = seat_number
+    if (seat_price !== undefined) update.seat_price = seat_price
+    console.log(update)
     try {
         await db_connect()
         const seat = await seatModel.findByIdAndUpdate(id, update, { new: true })

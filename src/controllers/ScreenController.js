@@ -9,10 +9,10 @@ const getScreens = async (req, res) => {
         await db_connect()
         let screens = []
         if (cinema) {
-            screens = await screenModel.find({ cinema: cinema }).populate('seats').populate('showtimes').exec()
+            screens = await screenModel.find({ cinema: cinema }, "_id cinema screenType showtimes").populate('showtimes').exec()
         }
         else {
-            screens = await screenModel.find({}).populate('seats').populate('showtimes').exec()
+            screens = await screenModel.find({}, "_id cinema screenType showtimes").populate('showtimes').exec()
         }
         res.status(200).json(screens)
     } catch (error) {
@@ -27,7 +27,7 @@ const getScreen = async (req, res) => {
     const id = req.params.id
     try {
         await db_connect()
-        const screen = await screenModel.findById(id)
+        const screen = await screenModel.findById(id, "_id cinema screenType base_price").populate('showtimes').exec()
         screen ? res.status(200).json(screen) : res.status(404).send("Screen not found")
     } catch (error) {
         res.status(500).send(error.message)
@@ -63,12 +63,12 @@ const createScreen = async (req, res) => {
 
 const updateScreen = async (req, res) => {
     const id = req.params.id
-    const { screenType, capacity } = req.body
+    const { screenType, base_price } = req.body
     const update = {}
     if (screenType)
         update.screenType = screenType
-    if (capacity)
-        update.capacity = capacity
+    if (base_price)
+        update.base_price = base_price
     try {
         await db_connect()
         const updated = await screenModel.findByIdAndUpdate(id, update, { new: true })
